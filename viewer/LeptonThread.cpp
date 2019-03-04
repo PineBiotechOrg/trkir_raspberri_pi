@@ -117,7 +117,7 @@ void LeptonThread::run()
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
                 //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
                 if(packetNumber != j) {
-                    printf('\nhere 1\n')
+                    printf("\nhere 1\n"")
                     j = -1;
                     resets += 1;
                     if(resets == 1000) {
@@ -130,12 +130,12 @@ void LeptonThread::run()
                     continue;
                 } else
                 if(packetNumber == 20) {
-                    printf('\nhere 2\n')
+                    printf("\nhere 2\n")
 
                     //reads the "ttt" number
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
                         if(segmentNumber != (i+1)%4){
-                            printf('\nhere 3\n')
+                            printf("\nhere 3\n")
                             j = -1;
                             resets += 1;
                             usleep(1000);
