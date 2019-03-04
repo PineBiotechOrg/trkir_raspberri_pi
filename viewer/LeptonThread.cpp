@@ -172,9 +172,6 @@ void LeptonThread::run()
             }
         }
 
-        char temp_file_name[10];
-         raw2Celsius(maxValue));
-
         float diff = maxValue - minValue;
         float scale = 255/diff;
 
