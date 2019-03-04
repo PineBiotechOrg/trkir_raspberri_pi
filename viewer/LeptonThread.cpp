@@ -111,7 +111,7 @@ void LeptonThread::run()
         int segmentNumber = 0;
         for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
             for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-                printf('%d %d', i, j);
+		printf("%d", i);
                 //read data packets from lepton over SPI
                 read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
@@ -120,26 +120,29 @@ void LeptonThread::run()
                     j = -1;
                     resets += 1;
                     usleep(1000);
-                    continue;
-                    if(resets == 10) {
+                    if(resets == 1000) {
                         SpiClosePort(0);
                         qDebug() << "restarting spi...";
-                        usleep(5000);
+                        usleep(1000000);
                         SpiOpenPort(0);
                     }
+		    continue;
                 } else
                 if(packetNumber == 20) {
-                    //reads the "ttt" number
+                    //reads the "ttt" num
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
                         //if it's not the segment expected reads again
                         //for some reason segment are shifted, 1 down in result
                         //(i+1)%4 corrects this shifting
                         if(segmentNumber != (i+1)%4){
+			    printf("stuck here");
                             j = -1;
+			    resets += 1;
+			    usleep(1000);
                         }
                 }
             }
-            usleep(1000/106);
+      //      usleep(1000);
         }
 
         frameBuffer = (uint16_t *)result;
@@ -170,7 +173,7 @@ void LeptonThread::run()
             }
         }
 
-        printf("%f", raw2Celsius(maxValue));
+        printf("\n\n%f\n\n", raw2Celsius(maxValue));
 
         float diff = maxValue - minValue;
         float scale = 255/diff;
@@ -194,9 +197,10 @@ void LeptonThread::run()
         }
 
         snapshot();
+	usleep(200000);
     }
 
-	SpiClosePort(0);
+    SpiClosePort(0);
 }
 
 
