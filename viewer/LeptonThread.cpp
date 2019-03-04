@@ -106,103 +106,100 @@ void LeptonThread::run()
 		pabort("can't get max speed hz");
 	}
 
-    int resets = 0;
-    int segmentNumber = 0;
-    for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
-        for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
+    while true {
+        int resets = 0;
+        int segmentNumber = 0;
+        for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
+            for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
 
-            //read data packets from lepton over SPI
-            read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
-            int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
-            //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
-            if(packetNumber != j) {
-                j = -1;
-                resets += 1;
-                usleep(1000);
-                continue;
-                if(resets == 100) {
-                    SpiClosePort(0);
-                    qDebug() << "restarting spi...";
-                    usleep(5000);
-                    SpiOpenPort(0);
-                }
-            } else
-            if(packetNumber == 20) {
-                //reads the "ttt" number
-                segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
-                    //if it's not the segment expected reads again
-                    //for some reason segment are shifted, 1 down in result
-                    //(i+1)%4 corrects this shifting
-                    if(segmentNumber != (i+1)%4){
-                        j = -1;
-                        //resets += 1;
-                        //usleep(1000);
+                //read data packets from lepton over SPI
+                read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
+                int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
+                //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
+                if(packetNumber != j) {
+                    j = -1;
+                    resets += 1;
+                    usleep(1000);
+                    continue;
+                    if(resets == 10) {
+                        SpiClosePort(0);
+                        qDebug() << "restarting spi...";
+                        usleep(5000);
+                        SpiOpenPort(0);
                     }
+                } else
+                if(packetNumber == 20) {
+                    //reads the "ttt" number
+                    segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
+                        //if it's not the segment expected reads again
+                        //for some reason segment are shifted, 1 down in result
+                        //(i+1)%4 corrects this shifting
+                        if(segmentNumber != (i+1)%4){
+                            j = -1;
+                        }
+                }
             }
         }
- //       usleep(10);
+
+        frameBuffer = (uint16_t *)result;
+        int row, column;
+        uint16_t value;
+        uint16_t minValue = 65535;
+        uint16_t maxValue = 0;
+
+
+        for(int i=0;i<FRAME_SIZE_UINT16;i++) {
+            //skip the first 2 uint16_t's of every packet, they're 4 header bytes
+            if(i % PACKET_SIZE_UINT16 < 2) {
+                continue;
+            }
+
+            //flip the MSB and LSB at the last second
+            int temp = result[i*2];
+            result[i*2] = result[i*2+1];
+            result[i*2+1] = temp;
+
+            value = frameBuffer[i];
+            if(value> maxValue) {
+                maxValue = value;
+            }
+            if(value < minValue) {
+                if(value != 0)
+                    minValue = value;
+            }
+        }
+
+        printf("%f", raw2Celsius(maxValue));
+
+        float diff = maxValue - minValue;
+        float scale = 255/diff;
+
+        for(int k=0; k<FRAME_SIZE_UINT16; k++) {
+            if(k % PACKET_SIZE_UINT16 < 2) {
+                continue;
+            }
+
+            value = (frameBuffer[k] - minValue) * scale;
+
+            if((k/PACKET_SIZE_UINT16) % 2 == 0){
+                column = (k % PACKET_SIZE_UINT16 - 2);
+                row = (k / PACKET_SIZE_UINT16)/2;
+            }
+            else{
+                column = ((k % PACKET_SIZE_UINT16 - 2))+(PACKET_SIZE_UINT16-2);
+                row = (k / PACKET_SIZE_UINT16)/2;
+            }
+            raw[row][column] = value;
+        }
+
+        snapshot();
     }
 
-    frameBuffer = (uint16_t *)result;
-    int row, column;
-    uint16_t value;
-    uint16_t minValue = 65535;
-    uint16_t maxValue = 0;
-
-
-    for(int i=0;i<FRAME_SIZE_UINT16;i++) {
-        //skip the first 2 uint16_t's of every packet, they're 4 header bytes
-        if(i % PACKET_SIZE_UINT16 < 2) {
-            continue;
-        }
-
-        //flip the MSB and LSB at the last second
-        int temp = result[i*2];
-        result[i*2] = result[i*2+1];
-        result[i*2+1] = temp;
-
-        value = frameBuffer[i];
-        if(value> maxValue) {
-            maxValue = value;
-        }
-        if(value < minValue) {
-            if(value != 0)
-                minValue = value;
-        }
-    }
-    printf("%f", raw2Celsius(maxValue));
-
-    float diff = maxValue - minValue;
-    float scale = 255/diff;
-
-    for(int k=0; k<FRAME_SIZE_UINT16; k++) {
-        if(k % PACKET_SIZE_UINT16 < 2) {
-            continue;
-        }
-
-        value = (frameBuffer[k] - minValue) * scale;
-
-        if((k/PACKET_SIZE_UINT16) % 2 == 0){
-            column = (k % PACKET_SIZE_UINT16 - 2);
-            row = (k / PACKET_SIZE_UINT16)/2;
-        }
-        else{
-            column = ((k % PACKET_SIZE_UINT16 - 2))+(PACKET_SIZE_UINT16-2);
-            row = (k / PACKET_SIZE_UINT16)/2;
-        }
-        raw[row][column] = value;
-    }
-    //lets emit the signal for update
-//	emit updateImage(myImage);
-    snapshot();
-
-	//finally, close SPI port just bcuz
 	SpiClosePort(0);
 }
 
 
 void LeptonThread::snapshot(){
-	snapshotCount++;
 	const char *name = "/home/pi/raspberry_pi/images/1.png";
     int width = 160;
     int height = 120;
@@ -226,35 +223,9 @@ void LeptonThread::snapshot(){
         }
         fprintf(pgmimg, "\n");
     }
+
     fclose(pgmimg);
 }
-//	snapshotCount++;
-//	const char *name = (std::to_string(snapshotCount) + ".png").c_str();
-//
-//	printf("%s", name);
-//
-//	myImage.save(QString(name), "PNG", 100);
-	
-	//---------------------- create raw data text file -----------------------
-	//creating file name
-//	ext = ".txt";
-//	strcpy(name, prefix);
-//	strcat(name, number);
-//	strcat(name, ext);
-//
-//	FILE *arq = fopen(name,"wt");
-//	char values[64];
-//
-//	for(int i = 0; i < 120; i++){
-//			for(int j = 0; j < 160; j++){
-//				sprintf(values, "%f", raw2Celsius(raw[i][j]));
-//				fputs(values, arq);
-//				fputs(" ", arq);
-//			}
-//			fputs("\n", arq);
-//	}
-//	fclose(arq);
-//  }
 
 void LeptonThread::performFFC() {
 	//perform FFC
