@@ -111,13 +111,13 @@ void LeptonThread::run()
         int segmentNumber = 0;
         for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
             for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-                printf("%d", i);
+         //       printf("%d", i);
                 //read data packets from lepton over SPI
                 read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
                 //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
                 if(packetNumber != j) {
-                    printf("\nhere 1\n"")
+                    printf("here 1");
                     j = -1;
                     resets += 1;
                     usleep(1000);
@@ -131,11 +131,11 @@ void LeptonThread::run()
                     continue;
                 } else
                 if(packetNumber == 20) {
-                    printf("\nhere 2\n")
+                    printf("here 2");
 
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
                         if(segmentNumber != (i+1)%4){
-                            printf("\nhere 3\n")
+                            printf("here 3");
                             j = -1;
                             resets += 1;
                             usleep(1000);
@@ -171,14 +171,7 @@ void LeptonThread::run()
                     minValue = value;
             }
         }
-
-<<<<<<< HEAD
         printf("\n\n%f\n\n", raw2Celsius(maxValue));
-=======
-        char temp_file_name[10];
-         raw2Celsius(maxValue));
->>>>>>> a4868ef533e03c695545f1ac75e16c278069142d
-
         float diff = maxValue - minValue;
         float scale = 255/diff;
 
@@ -201,7 +194,7 @@ void LeptonThread::run()
         }
 
         snapshot();
-	usleep(200000);
+	usleep(300000);
     }
 
     SpiClosePort(0);
