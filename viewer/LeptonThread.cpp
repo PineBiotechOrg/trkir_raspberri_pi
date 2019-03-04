@@ -111,7 +111,8 @@ void LeptonThread::run()
         int segmentNumber = 0;
         for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
             for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-         //       printf("%d", i);
+
+                printf("%d", i);
                 //read data packets from lepton over SPI
                 read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
@@ -141,7 +142,7 @@ void LeptonThread::run()
 
             }
         }
-        print("here");
+        printf("\nhere\n");
 
         frameBuffer = (uint16_t *)result;
         int row, column;
