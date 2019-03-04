@@ -139,6 +139,7 @@ void LeptonThread::run()
                         }
                 }
             }
+            usleep(1000/106);
         }
 
         frameBuffer = (uint16_t *)result;
