@@ -111,38 +111,37 @@ void LeptonThread::run()
         int segmentNumber = 0;
         for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
             for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-		printf("%d", i);
+                printf("%d", i);
                 //read data packets from lepton over SPI
                 read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
                 //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
                 if(packetNumber != j) {
+                    printf('\nhere 1\n')
                     j = -1;
                     resets += 1;
                     usleep(1000);
-                    if(resets == 1000) {
+                    if (resets == 1000) {
                         SpiClosePort(0);
-                        qDebug() << "restarting spi...";
+                        printf("\nrestarting spi...\n");
                         usleep(1000000);
                         SpiOpenPort(0);
                     }
-		    continue;
+                    usleep(1000);
+                    continue;
                 } else
                 if(packetNumber == 20) {
-                    //reads the "ttt" num
+                    printf('\nhere 2\n')
+
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
-                        //if it's not the segment expected reads again
-                        //for some reason segment are shifted, 1 down in result
-                        //(i+1)%4 corrects this shifting
                         if(segmentNumber != (i+1)%4){
-			    printf("stuck here");
+                            printf('\nhere 3\n')
                             j = -1;
-			    resets += 1;
-			    usleep(1000);
+                            resets += 1;
+                            usleep(1000);
                         }
                 }
             }
-      //      usleep(1000);
         }
 
         frameBuffer = (uint16_t *)result;
@@ -173,7 +172,12 @@ void LeptonThread::run()
             }
         }
 
+<<<<<<< HEAD
         printf("\n\n%f\n\n", raw2Celsius(maxValue));
+=======
+        char temp_file_name[10];
+         raw2Celsius(maxValue));
+>>>>>>> a4868ef533e03c695545f1ac75e16c278069142d
 
         float diff = maxValue - minValue;
         float scale = 255/diff;
