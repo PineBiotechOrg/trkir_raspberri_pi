@@ -139,7 +139,6 @@ void LeptonThread::run()
                 }
             }
         }
-        printf("\nhere\n");
 
         frameBuffer = (uint16_t *)result;
         int row, column;
@@ -168,6 +167,9 @@ void LeptonThread::run()
                     minValue = value;
             }
         }
+        float temp = raw2Celsius(maxValue)
+        printf("\nmax temp: %f\n", temp);
+
 
         float diff = maxValue - minValue;
         float scale = 255/diff;
@@ -190,7 +192,7 @@ void LeptonThread::run()
             raw[row][column] = value;
         }
 
-        snapshot();
+        snapshot(temp);
 	usleep(300000);
     }
 
@@ -198,7 +200,7 @@ void LeptonThread::run()
 }
 
 
-void LeptonThread::snapshot(){
+void LeptonThread::snapshot(float temp){
 	const char *name = "/home/pi/raspberry_pi/images/1.png";
     int width = 160;
     int height = 120;
@@ -224,6 +226,13 @@ void LeptonThread::snapshot(){
     }
 
     fclose(pgmimg);
+
+    FILE* temp_file;
+    temp_file = fopen("temp.txt", "wb");
+
+    fprintf(temp_file, "%f", temp);
+
+    fclose(temp_file);
 }
 
 void LeptonThread::performFFC() {
