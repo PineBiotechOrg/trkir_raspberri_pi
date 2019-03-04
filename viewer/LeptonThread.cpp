@@ -167,7 +167,7 @@ void LeptonThread::run()
                     minValue = value;
             }
         }
-        float temp = raw2Celsius(maxValue)
+        float temp = raw2Celsius(maxValue);
         printf("\nmax temp: %f\n", temp);
 
 

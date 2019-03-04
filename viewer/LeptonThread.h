@@ -34,7 +34,7 @@ public:
 
 public slots:
   void performFFC();
-  void snapshot();
+  void snapshot(float temp);
   void restart();
   void disable_agc();
   void enable_agc();
