@@ -111,22 +111,20 @@ void LeptonThread::run()
         int segmentNumber = 0;
         for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
             for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-
                 printf("%d", i);
                 //read data packets from lepton over SPI
                 read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
                 //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
-                if (resets == 1000) {
+                if(packetNumber != j) {
+                    j = -1;
+                    resets += 1;
+                    if (resets == 1000) {
                         SpiClosePort(0);
                         printf("\nrestarting spi...\n");
                         usleep(1000000);
                         SpiOpenPort(0);
-                        continue;
-                }
-                if(packetNumber != j) {
-                    j = -1;
-                    resets += 1;
+                    }
                     usleep(1000);
                     continue;
                 } else
@@ -139,7 +137,6 @@ void LeptonThread::run()
                             usleep(1000);
                         }
                 }
-
             }
         }
         printf("\nhere\n");

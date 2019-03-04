@@ -18,9 +18,12 @@
 int main( int argc, char **argv ) {
 	LeptonThread *thread = new LeptonThread();
 
-	thread->restart();
-	usleep(1000000);
-	thread->run();
+	while (true) {
+		usleep(1000000);
+		thread->run();
+		usleep(1000 * 1000 * 60);
+		thread->restart();
+	}
 
 	return 0;
 }
