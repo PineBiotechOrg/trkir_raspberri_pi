@@ -13,6 +13,12 @@ To clean:
 To start image saving:
 - ./start_script.sh &
 
+Set password to os environment:
+- vim ~/.bashrc
+- add following to the end of file: export SERVER_PASSWORD="password from skype"
+- esc + :wq
+- source ~/.bashrc
+
 To start download image to server:
 - cd .. (you should be at project root directory now (lepton_raspberry_pi/)
 - pip3 install -r requirements.txt
