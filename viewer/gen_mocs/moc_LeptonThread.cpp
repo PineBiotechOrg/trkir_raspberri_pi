@@ -35,11 +35,11 @@ static const uint qt_meta_data_LeptonThread[] = {
 
  // slots: signature, parameters, type, tag, flags
       54,   33,   33,   33, 0x0a,
-      67,   33,   33,   33, 0x0a,
-      78,   33,   33,   33, 0x0a,
+      67,   83,   33,   33, 0x0a,
       88,   33,   33,   33, 0x0a,
-     102,   33,   33,   33, 0x0a,
-     115,  132,   33,   33, 0x0a,
+      98,   33,   33,   33, 0x0a,
+     112,   33,   33,   33, 0x0a,
+     125,  142,   33,   33, 0x0a,
 
        0        // eod
 };
@@ -47,8 +47,9 @@ static const uint qt_meta_data_LeptonThread[] = {
 static const char qt_meta_stringdata_LeptonThread[] = {
     "LeptonThread\0updateText(QString)\0\0"
     "updateImage(QImage)\0performFFC()\0"
-    "snapshot()\0restart()\0disable_agc()\0"
-    "enable_agc()\0setColorMap(int)\0index\0"
+    "snapshot(float)\0temp\0restart()\0"
+    "disable_agc()\0enable_agc()\0setColorMap(int)\0"
+    "index\0"
 };
 
 void LeptonThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -60,7 +61,7 @@ void LeptonThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 0: _t->updateText((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 1: _t->updateImage((*reinterpret_cast< QImage(*)>(_a[1]))); break;
         case 2: _t->performFFC(); break;
-        case 3: _t->snapshot(); break;
+        case 3: _t->snapshot((*reinterpret_cast< float(*)>(_a[1]))); break;
         case 4: _t->restart(); break;
         case 5: _t->disable_agc(); break;
         case 6: _t->enable_agc(); break;
