@@ -3,6 +3,7 @@ import traceback
 import sys
 import uuid
 import time
+import subprocess
 import paramiko
 
 ip = '216.58.153.146'
@@ -14,6 +15,7 @@ TEMP_PATH = '../images/temp.txt'
 TO_PATH = '/storage/pi/{}'.format(hex(uuid.getnode()))
 IMG_NAME = '1.jpg'
 TEMP_NAME = 'temp.txt'
+CONVERT_SCRIPT = './convert.sh'
 
 ssh_client = paramiko.SSHClient()
 ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -32,6 +34,7 @@ while True:
             print('Cannot create dir ', TO_PATH)
             sys.exit(1)
         while True:
+            subprocess.run(CONVERT_SCRIPT)
             sftp_client.put(IMAGE_PATH, os.path.join(TO_PATH, IMG_NAME))
             sftp_client.put(TEMP_PATH, os.path.join(TO_PATH, TEMP_NAME))
             print('putted')
