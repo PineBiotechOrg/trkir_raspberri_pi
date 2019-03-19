@@ -18,3 +18,5 @@ To start download image to server:
 - pip3 install -r requirements.txt
 - cd ssh_scripts
 - python3 app.py &
+
+(!NOTE: better to use screen daemon instead of &)
