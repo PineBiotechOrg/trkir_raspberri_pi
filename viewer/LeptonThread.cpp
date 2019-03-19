@@ -228,7 +228,7 @@ void LeptonThread::snapshot(float temp){
     fclose(pgmimg);
 
     FILE* temp_file;
-    temp_file = fopen("temp.txt", "wb");
+    temp_file = fopen("/home/pi/raspberry_pi/images/temp.txt", "wb");
 
     fprintf(temp_file, "%f", temp);
 
