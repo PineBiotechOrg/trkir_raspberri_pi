@@ -24,7 +24,7 @@ while True:
         continue
 
     with ssh_client.open_sftp() as sftp_client:
-        (stdin, stdout, stderr) = sftp_client.exec_command('mkdir -p {}'.format(TO_PATH))
+        (stdin, stdout, stderr) = ssh_client.exec_command('mkdir -p {}'.format(TO_PATH))
         if stderr.read():
             print('Cannot create dir ', TO_PATH)
             sys.exit(1)
