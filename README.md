@@ -14,9 +14,6 @@ Install imagemagick to convert png to jpg:
 - sudo apt-get install imagemagick
 
 
-To start image saving:
-- ./start_script.sh &
-
 Set password to os environment:
 - sudo apt-get install vim
 - vim ~/.bashrc
@@ -28,8 +25,12 @@ To start download image to server:
 - sudo apt-get install build-essential libssl-dev libffi-dev python3-dev
 - cd .. (you should be at project root directory now (lepton_raspberry_pi/)
 - pip3 install -r requirements.txt
-- cd ssh_scripts
-- python3 app.py &
+
+To start everything:
+- cd viewer (from where you are)
+- ./start_script.sh & (image saving)
+- cd ../ssh_scripts
+- python3 app.py & (send images to server)
 
 Know your mac address (bag here):
 - cd ..
