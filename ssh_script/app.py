@@ -13,7 +13,7 @@ password = os.environ.get('SERVER_PASSWORD', '')
 IMAGE_PATH = '../images/1.jpg'
 TEMP_PATH = '../images/temp.txt'
 TO_PATH = '/storage/pi/{}'.format(hex(uuid.getnode()))
-IMG_NAME = '1.jpg'
+IMG_NAME = '{}.jpg'
 TEMP_NAME = 'temp.txt'
 CONVERT_SCRIPT = './convert.sh'
 
@@ -34,8 +34,10 @@ while True:
             print('Cannot create dir ', TO_PATH)
             sys.exit(1)
         while True:
+            timestamp = time.time()
             subprocess.call(CONVERT_SCRIPT, shell=True)
-            sftp_client.put(IMAGE_PATH, os.path.join(TO_PATH, IMG_NAME))
+            ssh_client.exec_command('rm {}/*'.format(TO_PATH))
+            sftp_client.put(IMAGE_PATH, os.path.join(TO_PATH, IMG_NAME.format(timestamp)))
             sftp_client.put(TEMP_PATH, os.path.join(TO_PATH, TEMP_NAME))
             print('putted')
             time.sleep(0.1)
