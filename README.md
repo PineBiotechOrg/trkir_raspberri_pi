@@ -33,7 +33,7 @@ To start download image to server:
 
 Know your mac address (bag here):
 - cd ..
-- ./mac_address.sh
+- python3 mac_address.py
 
 (!NOTE: better to use screen daemon instead of &) 
 (- sudo apt-get install screen)
