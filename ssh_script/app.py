@@ -36,7 +36,7 @@ while True:
         while True:
             timestamp = time.time()
             subprocess.call(CONVERT_SCRIPT, shell=True)
-            ssh_client.exec_command('rm {}/*'.format(TO_PATH))
+            ssh_client.exec_command('rm {}/*.jpg'.format(TO_PATH))
             sftp_client.put(IMAGE_PATH, os.path.join(TO_PATH, IMG_NAME.format(timestamp)))
             sftp_client.put(TEMP_PATH, os.path.join(TO_PATH, TEMP_NAME))
             print('putted')
