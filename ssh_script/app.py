@@ -38,5 +38,5 @@ while True:
             subprocess.call(CONVERT_SCRIPT, shell=True)
             sftp_client.put(IMAGE_PATH, os.path.join(TO_PATH, IMG_NAME))
             sftp_client.put(TEMP_PATH, os.path.join(TO_PATH, TEMP_NAME))
-            print(datetime.now())
+            print(datetime.datetime.now())
             time.sleep(0.1)
