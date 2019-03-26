@@ -19,7 +19,7 @@ int main( int argc, char **argv ) {
 	LeptonThread *thread = new LeptonThread();
 
 	thread->restart();
-	usleep(2000000);
+	usleep(4000000);
 	thread->run();
 
 	return 0;

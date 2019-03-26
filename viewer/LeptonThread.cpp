@@ -122,7 +122,7 @@ void LeptonThread::run()
                     if (resets == 1000) {
                         SpiClosePort(0);
                         printf("\nrestarting spi...\n");
-                        usleep(1000000);
+                        usleep(4000000);
                         SpiOpenPort(0);
                     }
                     usleep(1000);
@@ -193,7 +193,7 @@ void LeptonThread::run()
         }
 
         snapshot(temp);
-	usleep(300000);
+	    usleep(200000);
     }
 
     SpiClosePort(0);
