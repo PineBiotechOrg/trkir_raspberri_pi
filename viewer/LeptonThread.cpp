@@ -119,10 +119,10 @@ void LeptonThread::run()
                 if(packetNumber != j) {
                     j = -1;
                     resets += 1;
-                    if (resets == 1000) {
+                    if (resets == 500) {
                         SpiClosePort(0);
                         printf("\nrestarting spi...\n");
-                        usleep(4000000);
+                        usleep(3000000);
                         SpiOpenPort(0);
                     }
                     usleep(1000);
