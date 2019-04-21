@@ -109,38 +109,44 @@ void LeptonThread::run()
     while (true) {
         int resets = 0;
         int segmentNumber = 0;
-        for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
-            for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-                printf("%d", i);
-//                usleep(1000);
-                //read data packets from lepton over SPI
-                read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
-                int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
-                //if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
-                if(packetNumber != j) {
-                    j = -1;
-                    resets += 1;
-                    printf("if\n");
-                    if (resets == 500) {
-                        SpiClosePort(0);
-                        usleep(100000);
-                        printf("\nrestarting spi...\n");
-                        SpiOpenPort(0);
-                        usleep(3000000);
-                    }
-                    usleep(1000);
-                    continue;
-                } else if(packetNumber == 20) {
-                    segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
-                        if(segmentNumber != (i+1)%4){
-                            j = -1;
-                            resets += 1;
-                            usleep(1000);
-                        }
-                }
-                usleep(5000);
-            }
-        }
+        while(true) {
+		int resets = 0;
+		int segmentNumber = 0;
+		for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
+			for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
+
+				//read data packets from lepton over SPI
+				read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
+				int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
+				//printf("packetNumber: 0x%x\n", packetNumber);
+				//if it's a drop packet, reset j to 0, set to -1 so he'll be at 0 again loop
+				if(packetNumber != j) {
+					j = -1;
+					resets += 1;
+					usleep(1000);
+					continue;
+					if(resets == 100) {
+						SpiClosePort(0);
+						qDebug() << "restarting spi...";
+						usleep(5000);
+						SpiOpenPort(0);
+					}
+				} else
+				if(packetNumber == 20) {
+					//reads the "ttt" number
+					segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
+						//if it's not the segment expected reads again
+						//for some reason segment are shifted, 1 down in result
+						//(i+1)%4 corrects this shifting
+						if(segmentNumber != (i+1)%4){
+							j = -1;
+							//resets += 1;
+							//usleep(1000);
+						}
+				}
+			}
+			usleep(100);
+		}
 
         frameBuffer = (uint16_t *)result;
         int row, column;
