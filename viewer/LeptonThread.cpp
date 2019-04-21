@@ -130,7 +130,7 @@ void LeptonThread::run()
                     usleep(1000);
                     continue;
                 } else if(packetNumber == 20) {
-                    print("else'n");
+                    print("else\n");
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
                         if(segmentNumber != (i+1)%4){
                             j = -1;
