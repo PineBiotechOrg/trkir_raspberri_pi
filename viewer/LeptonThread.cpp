@@ -119,7 +119,7 @@ void LeptonThread::run()
                 if(packetNumber != j) {
                     j = -1;
                     resets += 1;
-                    print("if\n");
+                    printf("if\n");
                     if (resets == 500) {
                         SpiClosePort(0);
                         usleep(100000);
@@ -130,7 +130,7 @@ void LeptonThread::run()
                     usleep(1000);
                     continue;
                 } else if(packetNumber == 20) {
-                    print("else\n");
+                    printf("else\n");
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
                         if(segmentNumber != (i+1)%4){
                             j = -1;
