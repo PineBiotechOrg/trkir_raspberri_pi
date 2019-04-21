@@ -108,7 +108,12 @@ void LeptonThread::run() {
     while (true) {
         int resets = 0;
         int segmentNumber = 0;
+        is_break = false;
+
 		for(int i = 0; i < NUMBER_OF_SEGMENTS; i++) {
+		    if (is_break) {
+		        break;
+		    }
 			for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
 
 				//read data packets from lepton over SPI
@@ -120,12 +125,13 @@ void LeptonThread::run() {
 					j = -1;
 					resets += 1;
 					usleep(1000);
-					continue;
 					if(resets == 100) {
 						SpiClosePort(0);
 						qDebug() << "restarting spi...";
 						usleep(5000);
 						SpiOpenPort(0);
+						is_break = true;
+						break;
 					}
 				} else
 				if(packetNumber == 20) {
@@ -196,7 +202,7 @@ void LeptonThread::run() {
 
         snapshot(temp);
         printf("snapshotted\n");
-	    usleep(200000);
+	    usleep(100000);
     }
 
     SpiClosePort(0);
