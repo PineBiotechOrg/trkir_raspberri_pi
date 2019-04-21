@@ -111,7 +111,7 @@ void LeptonThread::run()
         int segmentNumber = 0;
         for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
             for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
-                printf("%d", i);
+//                printf("%d", i);
                 //read data packets from lepton over SPI
                 read(spi_cs0_fd, result+sizeof(uint8_t)*PACKET_SIZE*(i*PACKETS_PER_SEGMENT+j), sizeof(uint8_t)*PACKET_SIZE);
                 int packetNumber = result[((i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE)+1];
@@ -121,15 +121,14 @@ void LeptonThread::run()
                     resets += 1;
                     if (resets == 500) {
                         SpiClosePort(0);
+                        usleep(100000);
                         printf("\nrestarting spi...\n");
                         SpiOpenPort(0);
                         usleep(3000000);
                     }
                     usleep(1000);
                     continue;
-                } else
-                if(packetNumber == 20) {
-
+                } else if(packetNumber == 20) {
                     segmentNumber = result[(i*PACKETS_PER_SEGMENT+j)*PACKET_SIZE] >> 4;
                         if(segmentNumber != (i+1)%4){
                             j = -1;
@@ -137,6 +136,7 @@ void LeptonThread::run()
                             usleep(1000);
                         }
                 }
+                usleep(1000);
             }
         }
 
