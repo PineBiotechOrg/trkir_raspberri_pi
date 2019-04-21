@@ -105,6 +105,8 @@ void LeptonThread::run() {
 		pabort("can't get max speed hz");
 	}
 
+    bool is_break;
+
     while (true) {
         int resets = 0;
         int segmentNumber = 0;
