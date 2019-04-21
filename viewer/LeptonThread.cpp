@@ -204,7 +204,6 @@ void LeptonThread::run() {
         }
 
         snapshot(temp);
-        printf("snapshotted\n");
 	    usleep(100000);
     }
 
