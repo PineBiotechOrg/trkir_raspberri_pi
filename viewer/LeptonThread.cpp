@@ -204,7 +204,7 @@ void LeptonThread::run() {
         }
 
         snapshot(temp);
-	    usleep(100000);
+	    usleep(200000);
     }
 
     SpiClosePort(0);
