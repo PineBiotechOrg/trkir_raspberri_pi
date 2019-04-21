@@ -114,6 +114,7 @@ void LeptonThread::run() {
 
 		for(int i = 0; i < NUMBER_OF_SEGMENTS; i++) {
 		    if (is_break) {
+		        printf("break");
 		        break;
 		    }
 			for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
@@ -127,7 +128,7 @@ void LeptonThread::run() {
 					j = -1;
 					resets += 1;
 					usleep(1000);
-					if(resets == 100) {
+					if(resets == 1000) {
 						SpiClosePort(0);
 						qDebug() << "restarting spi...";
 						usleep(5000);
