@@ -59,8 +59,7 @@ SpiOpenPort(0);
 LeptonThread::~LeptonThread() {
 }
 
-void LeptonThread::run()
-{
+void LeptonThread::run() {
 	int ret = 0;
 	int fd;
 
@@ -109,10 +108,7 @@ void LeptonThread::run()
     while (true) {
         int resets = 0;
         int segmentNumber = 0;
-        while(true) {
-		int resets = 0;
-		int segmentNumber = 0;
-		for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
+		for(int i = 0; i < NUMBER_OF_SEGMENTS; i++) {
 			for(int j=0;j<PACKETS_PER_SEGMENT;j++) {
 
 				//read data packets from lepton over SPI
