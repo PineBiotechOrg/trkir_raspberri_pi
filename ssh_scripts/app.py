@@ -9,7 +9,7 @@ import paramiko
 
 ip = '216.58.153.146'
 username = 'viktor'
-password = 'a1441262'#os.environ.get('SERVER_PASSWORD', '')
+password = 'lalala'#os.environ.get('SERVER_PASSWORD', '')
 
 IMAGE_PATH = '../images/1.jpg'
 TEMP_PATH = '../images/temp.txt'
